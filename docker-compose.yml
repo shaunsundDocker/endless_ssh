@@ -1,15 +1,20 @@
-version: "3"
+---
+version: "2.1"
 services:
   endlessh:
-    hostname: endlessh
-    image: sund/endlessh
+    image: lscr.io/linuxserver/endlessh:latest
     container_name: endlessh
-    volumes:
-      - ~/Local/appdata/endlessh:/config
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/New_York
+      - TZ=Etc/UTC
+      - MSDELAY=10000 #optional
+      - MAXLINES=32 #optional
+      - MAXCLIENTS=4096 #optional
+      - LOGFILE=false #optional
+      - BINDFAMILY= #optional
+    volumes:
+      - /path/to/appdata:/config #optional
     ports:
-      - "2222:2222"
+      - 22:2222
     restart: unless-stopped
