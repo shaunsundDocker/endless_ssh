@@ -1,26 +1,31 @@
 ---
 
 # jenkins variables
-project_name: docker-baseimage-ubuntu
-external_type: os
+project_name: docker-endlessh
+external_type: github_commit
 release_type: stable
-release_tag: bionic
-ls_branch: bionic
+release_tag: latest
+ls_branch: main
 repo_vars:
-  - BUILD_VERSION_ARG = 'OS'
+  - EXT_GIT_BRANCH = 'master'
+  - EXT_USER = 'skeeto'
+  - EXT_REPO = 'endlessh'
+  - CONTAINER_NAME = 'endlessh'
+  - BUILD_VERSION_ARG = 'ENDLESSH_RELEASE'
   - LS_USER = 'linuxserver'
-  - LS_REPO = 'docker-baseimage-ubuntu'
-  - CONTAINER_NAME = 'baseimage-ubuntu'
-  - DOCKERHUB_IMAGE = 'lsiobase/ubuntu'
-  - DEV_DOCKERHUB_IMAGE = 'lsiodev/ubuntu'
-  - PR_DOCKERHUB_IMAGE = 'lspipepr/ubuntu'
-  - DIST_IMAGE = 'ubuntu'
+  - LS_REPO = 'docker-endlessh'
+  - DOCKERHUB_IMAGE = 'linuxserver/endlessh'
+  - DEV_DOCKERHUB_IMAGE = 'lsiodev/endlessh'
+  - PR_DOCKERHUB_IMAGE = 'lspipepr/endlessh'
+  - DIST_IMAGE = 'alpine'
   - MULTIARCH='true'
   - CI='true'
   - CI_WEB='false'
-  - CI_PORT='80'
-  - CI_SSL='true'
-  - CI_DELAY='30'
+  - CI_PORT='8080'
+  - CI_SSL='false'
+  - CI_DELAY='120'
   - CI_DOCKERENV='TZ=US/Pacific'
   - CI_AUTH='user:password'
-  - CI_WEBPATH=''
+  - CI_WEBPATH='/'
+sponsor_links:
+  - { name: "Endlessh", url: "https://secure.givewell.org/" }

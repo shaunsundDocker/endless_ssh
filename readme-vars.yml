@@ -1,40 +1,62 @@
 ---
 
 # project information
-project_name: baseimage-ubuntu
-full_custom_readme: |
-  {% raw -%}
-  [linuxserverurl]: https://linuxserver.io
-  [forumurl]: https://forum.linuxserver.io
-  [ircurl]: https://www.linuxserver.io/irc/
-  [appurl]: https://cloud-images.ubuntu.com
-  [dockerfileurl]: https://github.com/linuxserver/docker-baseimage-ubuntu/blob/master/Dockerfile
+project_name: endlessh
+project_url: "https://github.com/skeeto/endlessh"
+project_logo: "https://github.com/linuxserver/docker-templates/raw/master/linuxserver.io/img/openssh-server-logo.png"
+project_blurb: "[{{ project_name|capitalize }}]({{ project_url }}) is an SSH tarpit that very slowly sends an endless, random SSH banner. It keeps SSH clients locked up for hours or even days at a time. The purpose is to put your real SSH server on another port and then let the script kiddies get stuck in this tarpit instead of bothering a real server."
+project_lsio_github_repo_url: "https://github.com/linuxserver/docker-{{ project_name }}"
+
+# supported architectures
+available_architectures:
+  - { arch: "{{ arch_x86_64 }}", tag: "amd64-latest"}
+  - { arch: "{{ arch_arm64 }}", tag: "arm64v8-latest"}
+  - { arch: "{{ arch_armhf }}", tag: "arm32v7-latest"}
+
+# development version
+development_versions: false
+development_versions_items:
+  - { tag: "latest", desc: "Stable releases" }
+
+# container parameters
+common_param_env_vars_enabled: true
+param_container_name: "{{ project_name }}"
+param_usage_include_vols: false
+param_volumes:
+  - { vol_path: "/config", vol_host_path: "/path/to/appdata", desc: "Contains all relevant configuration and data." }
+param_usage_include_ports: true
+param_ports:
+  - { external_port: "22", internal_port: "2222", port_desc: "ssh port" }
+param_usage_include_env: true
+param_env_vars:
+  - { env_var: "TZ", env_value: "Europe/London", desc: "Specify a timezone to use EG Europe/London"}
+
+# optional container parameters
+opt_param_usage_include_env: true
+opt_param_env_vars:
+  - { env_var: "MSDELAY", env_value: "10000", desc: "The endless banner is sent one line at a time. This is the delay in milliseconds between individual lines." }
+  - { env_var: "MAXLINES", env_value: "32", desc: "The length of each line is randomized. This controls the maximum length of each line. Shorter lines may keep clients on for longer if they give up after a certain number of bytes." }
+  - { env_var: "MAXCLIENTS", env_value: "4096", desc: "Maximum number of connections to accept at a time. Connections beyond this are not immediately rejected, but will wait in the queue." }
+  - { env_var: "LOGFILE", env_value: "false", desc: "By default, the app logs to container log. If this is set to `true`, the log will be output to file under `/config/logs/endlessh` (`/config` needs to be mapped)." }
+  - { env_var: "BINDFAMILY", env_value: "", desc: "By default, the app binds to IPv4 and IPv6 addresses. Set it to `4` or `6` to bind to IPv4 only or IPv6 only, respectively. Leave blank to bind to both." }
+opt_param_usage_include_vols: true
+opt_param_volumes:
+  - { vol_path: "/config", vol_host_path: "/path/to/appdata", desc: "Required if `LOGFILE` is set to `true`." }
 
 
+optional_block_1: false
+optional_block_1_items: ""
 
-  [![linuxserver.io](https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/linuxserver_medium.png?v=4&s=4000)][linuxserverurl]
+# application setup block
+app_setup_block_enabled: true
+app_setup_block: |
+  The app listens on the port mapped for ssh connections. To log to file, set the environment variable `LOGFILE` to `true` and map a volume for `/config`. The logs will be under `/config/logs/endlessh`.
 
-
-  ## Contact information:-
-
-  | Type | Address/Details |
-  | :---: | --- |
-  | Discord | [Discord](https://discord.gg/YWrKVTn) |
-  | IRC | freenode at `#linuxserver.io` more information at:- [IRC][ircurl]
-  | Forum | [LinuxServer.io forum][forumurl] |
-
-  &nbsp;
-  &nbsp;
-
-  [![](https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/Dockerfile-Xenial-green.png)](https://github.com/linuxserver/docker-baseimage-ubuntu/blob/xenial/Dockerfile)
-
-  [![](https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/Dockerfile-Bionic-green.png)](https://github.com/linuxserver/docker-baseimage-ubuntu/blob/bionic/Dockerfile)
-
-  [![](https://images.microbadger.com/badges/image/lsiobase/ubuntu.svg)](https://microbadger.com/images/lsiobase/ubuntu "Get your own image badge on microbadger.com")
-
-  A custom base image built with [Ubuntu cloud image][appurl] and [S6 overlay](https://github.com/just-containers/s6-overlay)..
-
-  The following line is only in this repo for loop testing:
-
-  - { date: "01.01.50:", desc: "I am the release message for this internal repo." }
-  {%- endraw %}
+# changelog
+changelogs:
+  - { date: "23.09.22:", desc: "Migrate to s6v3." }
+  - { date: "20.07.22:", desc: "Rebase to Alpine 3.16." }
+  - { date: "16.04.22:", desc: "Rebase to Alpine 3.15." }
+  - { date: "07.10.21:", desc: "Fix typo on MAXLINES var." }
+  - { date: "08.06.21:", desc: "Add BINDFAMILY option." }
+  - { date: "16.04.21:", desc: "Initial Release." }
